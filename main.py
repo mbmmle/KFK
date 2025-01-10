@@ -1,1 +1,1 @@
-#Tu bedzie aplikacja we flasku
+print("Hello, World")
