@@ -1,3 +1,1 @@
-import time
-
-print(time.time())
+#Tu bedzie aplikacja we flasku
