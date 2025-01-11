@@ -119,17 +119,16 @@ def koszyk():
             for produkt_id, quantity in session['cart'].items():
                 produkt = Produkt.query.get(produkt_id)
                 order_details += f"{produkt.nazwa} - {quantity} x {produkt.cena} PLN\n"
-            order_details += f"Użytkownik: {current_user.email}\n\n"
 
             temp= int(data_zamowienia.timestamp())
-            paragon_filename = f"paragon_{temp}.txt"
-            paragon_path = os.path.join('temp', 'paragony', paragon_filename)
+            paragon_filename = f"temp/paragony/paragon_{temp}.txt"
+            paragon_path = os.path.join(paragon_filename)
             with open(paragon_path, 'w') as file:
                 file.write(order_details)
 
 
 
-            zamowienie.paragon_path = paragon_path
+            zamowienie.paragon_path = paragon_filename
             zamowienie.user_id = current_user.id
             db.session.add(zamowienie)
             db.session.commit()
@@ -140,6 +139,17 @@ def koszyk():
 
     produkty = Produkt.query.filter(Produkt.id.in_(session['cart'].keys())).all()
     return render_template('koszyk.html', produkty=produkty, cart=session['cart'],suma_cala=suma_cala)
+
+@app.route("/konto")
+@login_required
+def konto():
+    zamowienia = Zamowienie.query.filter_by(user_id=current_user.id).all()
+    lista_zamowien = []
+    for zamowienie in zamowienia:
+        with open(zamowienie.paragon_path, 'r') as file:
+            paragon_content = file.read()
+            lista_zamowien.append(paragon_content)
+    return render_template('konto.html', lista_zamowien=lista_zamowien)
 
 if __name__ == "__main__":
     with app.app_context():
