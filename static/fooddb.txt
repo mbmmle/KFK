@@ -1,0 +1,2 @@
+2134 Burger 23,99 "Pyszne!"
+2313213 Kurczak 12,33 "Super smaczne"

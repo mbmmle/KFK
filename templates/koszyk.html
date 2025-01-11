@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Koszyk</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Twój koszyk</h2>
+        <ul>
+            {% for produkt_id, quantity in cart.items() %}
+                {% set produkt = produkty|selectattr('id', 'equalto', produkt_id|int)|first %}
+                <li>
+                    <img src="{{url_for('static', filename=produkt.zdjecie) }}" alt="{{ produkt.nazwa }}" width="100">
+                    <h3>{{ produkt.nazwa }}</h3>
+                    <p>Ilość: {{ quantity }}</p>
+                    <p>Cena: {{ produkt.cena }} PLN</p>
+                    <p>Łącznie: {{ produkt.cena * quantity }} PLN</p>
+                </li>
+            {% endfor %}
+        </ul>
+        <h3>Suma: {{ suma_cala }} PLN</h3>
+        <form method="POST" action="{{ url_for('koszyk') }}">
+            <button type="submit">Zamów</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zamów</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Produkty</h2>
+        <ul>
+            {% for produkt in produkty %}
+                <li>
+                    <img src="{{ url_for('static', filename=produkt.zdjecie) }}" alt="{{ produkt.nazwa }}" width="100">
+                    <h3>{{ produkt.nazwa }}</h3>
+                    <p>{{ produkt.opis }}</p>
+                    <p>Cena: {{ produkt.cena }} PLN</p>
+                    <form method="POST" action="{{ url_for('zamow') }}">
+                        <input type="hidden" name="produkt_id" value="{{ produkt.id }}">
+                        <label for="quantity">Ilość:</label>
+                        <input type="number" name="quantity" value="1" min="1">
+                        <button type="submit">Dodaj do koszyka</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+        <h2>Twój koszyk</h2>
+        <ul>
+            {% for produkt_id, quantity in cart.items() %}
+                {% set produkt = produkty|selectattr('id', 'equalto', produkt_id|int)|first %}
+                <li>{{ produkt.nazwa }} - {{ quantity }} x {{ produkt.cena }} PLN</li>
+            {% endfor %}
+        </ul>
+        <a href="{{ url_for('koszyk') }}" class="btn btn-primary">Przejdź do koszyka</a>
+    </div>
+</body>
+</html>
