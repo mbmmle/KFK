@@ -152,6 +152,8 @@ def koszyk():
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
-        Produkt.load_from_file('static/fooddb.txt') 
+        Produkt.load_from_file('static/fooddb.txt')
+        if (not os.path.exists('temp/paragony')):
+            os.makedirs('temp/paragony')
     app.run(host='0.0.0.0', port=90, debug=True)
     
