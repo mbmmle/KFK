@@ -19,17 +19,9 @@ roles_user = db.Table(
     db.Column('role_id',db.ForeignKey('role.id'))
 )
 
-zamowienie_produkt = db.Table(
-    'zamowienie_produkt',
-    db.Column('zamowienie_id', db.Integer, db.ForeignKey('zamowienie.id'), primary_key=True),
-    db.Column('produkt_id', db.Integer, db.ForeignKey('produkt.id'), primary_key=True),
-    db.Column('ilosc', db.Integer, nullable=False)
-)
-
 class Zamowienie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     cena = db.Column(db.Float)
-    produkty = db.relationship('Produkt', secondary='zamowienie_produkt', backref=db.backref('zamowienia', lazy='dynamic'))
     paragon_path = db.Column(db.String(255))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
@@ -129,7 +121,7 @@ def koszyk():
                 order_details += f"{produkt.nazwa} - {quantity} x {produkt.cena} PLN\n"
             order_details += f"Użytkownik: {current_user.email}\n\n"
 
-            temp= int(datetime.datetime.now().timestamp())
+            temp= int(data_zamowienia.timestamp())
             paragon_filename = f"paragon_{temp}.txt"
             paragon_path = os.path.join('temp', 'paragony', paragon_filename)
             with open(paragon_path, 'w') as file:
