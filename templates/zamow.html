@@ -1,38 +1,153 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zamów</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Zamów - Kentucky Fried Kurczak</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        .custom-navbar {
+            background-color: #B22222;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-navbar .navbar-brand {
+            color: #fff;
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        h2 {
+            color: #B22222;
+            margin-bottom: 20px;
+        }
+
+        .product-item {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-item img {
+            max-width: 100px;
+            margin-right: 15px;
+        }
+
+        .product-item h3 {
+            font-size: 1.25rem;
+            color: #B22222;
+        }
+
+        .product-item p {
+            margin: 5px 0;
+        }
+
+        .product-item button {
+            background-color: #B22222;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .product-item button:hover {
+            background-color: #8B0000;
+        }
+
+        .cart-summary {
+            margin-top: 40px;
+        }
+
+        .cart-summary ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .cart-summary li {
+            background: #fff;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-summary a {
+            display: block;
+            text-align: center;
+            background-color: #28a745;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .cart-summary a:hover {
+            background-color: #800000;
+            transform: translateY(-3px); /* Lekki efekt unoszenia */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Cień po najechaniu */
+        }
+    </style>
 </head>
 <body>
+    {% extends 'base.html' %}
+    {% block content %}
     <div class="container">
         <h2>Produkty</h2>
-        <ul>
+        <div class="row">
             {% for produkt in produkty %}
-                <li>
-                    <img src="{{ url_for('static', filename=produkt.zdjecie) }}" alt="{{ produkt.nazwa }}" width="100">
-                    <h3>{{ produkt.nazwa }}</h3>
-                    <p>{{ produkt.opis }}</p>
-                    <p>Cena: {{ produkt.cena }} PLN</p>
-                    <form method="POST" action="{{ url_for('zamow') }}">
-                        <input type="hidden" name="produkt_id" value="{{ produkt.id }}">
-                        <label for="quantity">Ilość:</label>
-                        <input type="number" name="quantity" value="1" min="1">
-                        <button type="submit">Dodaj do koszyka</button>
-                    </form>
-                </li>
+                <div class="col-md-4">
+                    <div class="product-item d-flex align-items-center">
+                        <img src="{{ url_for('static', filename=produkt.zdjecie) }}" alt="{{ produkt.nazwa }}">
+                        <div>
+                            <h3>{{ produkt.nazwa }}</h3>
+                            <p>{{ produkt.opis }}</p>
+                            <p><strong>Cena:</strong> {{ produkt.cena }} PLN</p>
+                            <form method="POST" action="{{ url_for('zamow') }}">
+                                <input type="hidden" name="produkt_id" value="{{ produkt.id }}">
+                                <div class="mb-3">
+                                    <label for="quantity">Ilość:</label>
+                                    <input type="number" name="quantity" value="1" min="1" class="form-control w-50">
+                                </div>
+                                <button type="submit" class="btn btn-danger">Dodaj do koszyka</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             {% endfor %}
-        </ul>
-        <h2>Twój koszyk</h2>
-        <ul>
-            {% for produkt_id, quantity in cart.items() %}
-                {% set produkt = produkty|selectattr('id', 'equalto', produkt_id|int)|first %}
-                <li>{{ produkt.nazwa }} - {{ quantity }} x {{ produkt.cena }} PLN</li>
-            {% endfor %}
-        </ul>
-        <a href="{{ url_for('koszyk') }}" class="btn btn-primary">Przejdź do koszyka</a>
+        </div>
+
+        <div class="cart-summary">
+            <h2>Twój koszyk</h2>
+            <ul>
+                {% for produkt_id, quantity in cart.items() %}
+                    {% set produkt = produkty|selectattr('id', 'equalto', produkt_id|int)|first %}
+                    <li>{{ produkt.nazwa }} - {{ quantity }} x {{ produkt.cena }} PLN</li>
+                {% endfor %}
+            </ul>
+            <a href="{{ url_for('koszyk') }}" class="btn btn-success">Przejdź do koszyka</a>
+        </div>
     </div>
+    <p></p>
+    <p></p>
+    <p>Zdjęcia wygenerowane przez AI.</p>
+    {% endblock %}
 </body>
 </html>

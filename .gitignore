@@ -170,5 +170,4 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 /static/temp/paragony
-/static/images 
 /temp

@@ -1,6 +1,6 @@
 import os, datetime
 import pkg_resources
-from flask import Flask, request, render_template, redirect, url_for, flash, session, send_from_directory
+from flask import Flask, request, render_template, redirect, url_for,  session, send_from_directory
 from flask_security import Security, UserMixin, RoleMixin ,SQLAlchemyUserDatastore ,current_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 
@@ -12,6 +12,8 @@ app.config['SECURITY_PASSWORD_SALT']=os.environ.get('SECURITY_PASSWORD_SALT','ja
 app.config['SECURITY_REGISTERABLE'] = True
 app.config['SECURITY_SEND_REGISTER_EMAIL']=False
 db=SQLAlchemy(app)
+
+
 
 roles_user = db.Table(
     'roles_users',
@@ -37,15 +39,15 @@ class Produkt(db.Model):
         if not os.path.exists(file_path):
             print(f"File not found: {file_path}")
             return
-        with open(file_path, 'r') as file:
+        with open(file_path, 'r', encoding='utf-8') as file:
             for line in file:
-                parts = line.strip().split(' ', 3)
+                parts = line.strip().split('/', 3)
                 if len(parts) == 4:
                     id, nazwa, cena, opis = parts
                     if not Produkt.query.get(int(id)):
                         produkt = Produkt(
                             id=int(id),
-                            nazwa=nazwa,
+                            nazwa=nazwa.strip('"'),
                             cena=float(cena.replace(',', '.')),
                             opis=opis.strip('"'),
                             zdjecie=f'images/{id}.jpg'
@@ -98,7 +100,7 @@ def zamow():
             else:
                 session['cart'][produkt_id] = ilosc
             session.modified = True
-            flash('Produkt dodany do koszyka!', 'success')
+            
 
     produkty = Produkt.query.all() 
     return render_template('zamow.html', produkty=produkty, cart=session['cart'])
@@ -115,7 +117,8 @@ def koszyk():
             zamowienie = Zamowienie()
             data_zamowienia = datetime.datetime.now()
             zamowienie.cena = sum(produkt.cena * quantity for produkt_id, quantity in session['cart'].items() for produkt in Produkt.query.filter_by(id=produkt_id))
-            order_details = f"Data zamówienia: {data_zamowienia.strftime("%c")}\nCena: {zamowienie.cena}\nProdukty:\n"
+            zamowienie.cena=round(zamowienie.cena, 2)
+            order_details = f"Data zamówienia: {data_zamowienia.strftime("%c")}\nCena: {zamowienie.cena} PLN \nProdukty:\n"
             for produkt_id, quantity in session['cart'].items():
                 produkt = Produkt.query.get(produkt_id)
                 order_details += f"{produkt.nazwa} - {quantity} x {produkt.cena} PLN\n"
@@ -134,7 +137,6 @@ def koszyk():
             db.session.commit()
 
             session['cart'] = {}
-            flash('Zamówienie złożone pomyślnie!', 'success')
             return redirect(url_for('index'))
 
     produkty = Produkt.query.filter(Produkt.id.in_(session['cart'].keys())).all()
