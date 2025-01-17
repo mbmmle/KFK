@@ -53,6 +53,10 @@
             padding: 0;
             background-color: #f9f9f9;
             color: #333;
+            background-image: url('{{ url_for('static', filename='images/background.jpg') }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
         }
 
         .container-lg {
@@ -229,7 +233,7 @@
         }
     </script>
 
-    
+    <p style="text-align: center; color: gray;">Zdjęcia wygenerowane przez AI.</p>
     {% endblock %}
 </body>
 </html>

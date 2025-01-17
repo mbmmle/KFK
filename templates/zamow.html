@@ -139,7 +139,12 @@
             <ul>
                 {% for produkt_id, quantity in cart.items() %}
                     {% set produkt = produkty|selectattr('id', 'equalto', produkt_id|int)|first %}
-                    <li>{{ produkt.nazwa }} - {{ quantity }} x {{ produkt.cena }} PLN</li>
+                    <li>{{ produkt.nazwa }} - {{ quantity }} x {{ produkt.cena }} PLN
+                    <form method="POST" action="{{ url_for('zamow') }}" style="display:inline;">
+                        <input type="hidden" name="produkt_id" value="{{ produkt.id }}">
+                        <button type="submit" name="remove" class="btn btn-danger btn-sm">Usuń</button>
+                    </form>
+                    </li>
                 {% endfor %}
             </ul>
             <a href="{{ url_for('koszyk') }}" class="btn btn-success">Przejdź do koszyka</a>
@@ -147,7 +152,7 @@
     </div>
     <p></p>
     <p></p>
-    <p>Zdjęcia wygenerowane przez AI.</p>
+    <p style="text-align: center; color: gray;">Zdjęcia wygenerowane przez AI.</p>
     {% endblock %}
 </body>
 </html>

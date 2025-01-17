@@ -87,12 +87,23 @@
   {% from "security/_macros.html" import render_field_with_errors, render_field, render_field_errors, render_form_errors, prop_next %}
 
   {% block content %}
-    {% include "security/_messages.html" %}
+  
     <nav class="navbar navbar-expand-lg custom-navbar">
       <div class="container-fluid">
         <a class="navbar-brand" href="{{ url_for('index') }}">Kentucky Fried Kurczak</a>
       </div>
     </nav>
+    <div class="flash-messages">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="container">
+            {% for category, message in messages %}
+              <div style="text-align: center; color: red; font-size: 2rem;">Musisz się zalogować aby wykonać zamówienie</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+    </div>
     <section>
       <h1>{{ _fsdomain('Zaloguj się do Kentucky Fried Kurczak') }}</h1>
       <form action="{{ url_for_security('login') }}{{ prop_next() }}" method="post" name="login_user_form">

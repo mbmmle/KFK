@@ -92,14 +92,20 @@ def zamow():
         session['cart'] = {}
 
     if request.method == 'POST':
-        produkt_id = request.form.get('produkt_id')
-        ilosc = int(request.form.get('quantity', 1))
-        if produkt_id:
+        if 'remove' in request.form:
+            produkt_id = request.form.get('produkt_id')
             if produkt_id in session['cart']:
-                session['cart'][produkt_id] += ilosc
-            else:
-                session['cart'][produkt_id] = ilosc
-            session.modified = True
+                del session['cart'][produkt_id]
+                session.modified = True
+        else:
+            produkt_id = request.form.get('produkt_id')
+            ilosc = int(request.form.get('quantity', 1))
+            if produkt_id:
+                if produkt_id in session['cart']:
+                    session['cart'][produkt_id] += ilosc
+                else:
+                    session['cart'][produkt_id] = ilosc
+                session.modified = True
             
 
     produkty = Produkt.query.all() 

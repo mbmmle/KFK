@@ -119,6 +119,7 @@
     {% block content %}
     <div class="container">
         <h2>Twój koszyk</h2>
+        {% if cart %}
         <ul>
             {% for produkt_id, quantity in cart.items() %}
                 {% set produkt = produkty|selectattr('id', 'equalto', produkt_id|int)|first %}
@@ -139,7 +140,12 @@
         <form method="POST" action="{{ url_for('koszyk') }}">
             <button type="submit" class="btn">Zamów</button>
         </form>
+        {% else %}
+        <p>Twój koszyk jest pusty.</p>
+        {% endif %}
+        <a href="{{ url_for('zamow') }}" class="btn mt-4">Wróć na stronę zamówienia</a>
     </div>
+    <p style="text-align: center; color: gray;">Zdjęcia wygenerowane przez AI.</p>
     {% endblock %}
 </body>
 </html>

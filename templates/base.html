@@ -36,10 +36,13 @@
                   Konto
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="konto">
+                  {% if current_user.is_authenticated %}
                   <li><a class="dropdown-item" href="{{ url_for('konto') }}">Moje Konto</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('koszyk') }}">Koszyk</a></li>
-                  <li><a class="dropdown-item" href="{{ url_for('security.login') }}">Zaloguj Się</a></li>
                   <li><a class="dropdown-item" href="{{ url_for('security.logout') }}">Wyloguj Się</a></li>
+                  {% else %}
+                  <li><a class="dropdown-item" href="{{ url_for('security.login') }}">Zaloguj Się</a></li>
+                  {% endif %} 
                 </ul>
               </div>
             </ul>
