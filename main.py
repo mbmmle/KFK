@@ -1,6 +1,6 @@
-import os, datetime
+import os, datetime, time
 import pkg_resources
-from flask import Flask, request, render_template, redirect, url_for,  session, send_from_directory
+from flask import Flask, request, render_template, redirect, url_for,  session, send_from_directory, flash
 from flask_security import Security, UserMixin, RoleMixin ,SQLAlchemyUserDatastore ,current_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 
@@ -26,6 +26,7 @@ class Zamowienie(db.Model):
     cena = db.Column(db.Float)
     paragon_path = db.Column(db.String(255))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    address = db.Column(db.String(255))
 
 class Produkt(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -118,35 +119,45 @@ def koszyk():
         session['cart'] = {}
     suma_cala = sum(produkt.cena * quantity for produkt_id, quantity in session['cart'].items() for produkt in Produkt.query.filter_by(id=produkt_id))
     suma_cala = round(suma_cala, 2)
+    address = session.get('address', None)
     if request.method == 'POST':
-        if session['cart']:
-            zamowienie = Zamowienie()
-            data_zamowienia = datetime.datetime.now()
-            zamowienie.cena = sum(produkt.cena * quantity for produkt_id, quantity in session['cart'].items() for produkt in Produkt.query.filter_by(id=produkt_id))
-            zamowienie.cena=round(zamowienie.cena, 2)
-            order_details = f"Data zamówienia: {data_zamowienia.strftime("%c")}\nCena: {zamowienie.cena} PLN \nProdukty:\n"
-            for produkt_id, quantity in session['cart'].items():
-                produkt = Produkt.query.get(produkt_id)
-                order_details += f"{produkt.nazwa} - {quantity} x {produkt.cena} PLN\n"
+        if 'submit_address' in request.form:
+            address = request.form.get('address')
+            session['address'] = address
+            flash('Adres został zapisany!', 'success')
+        elif 'place_order' in request.form and address!=None:
+            if session['cart']:
+                zamowienie = Zamowienie()
+                data_zamowienia = datetime.datetime.now()
+                zamowienie.cena = sum(produkt.cena * quantity for produkt_id, quantity in session['cart'].items() for produkt in Produkt.query.filter_by(id=produkt_id))
+                zamowienie.cena=round(zamowienie.cena, 2)
+                zamowienie.address = address
+                order_details = f"Data zamówienia: {data_zamowienia.strftime("%c")}\nCena: {zamowienie.cena} PLN \nAdres:{zamowienie.address}\nProdukty:\n"
+                for produkt_id, quantity in session['cart'].items():
+                    produkt = Produkt.query.get(produkt_id)
+                    order_details += f"{produkt.nazwa} - {quantity} x {produkt.cena} PLN\n"
 
-            temp= int(data_zamowienia.timestamp())
-            paragon_filename = f"temp/paragony/paragon_{temp}.txt"
-            paragon_path = os.path.join(paragon_filename)
-            with open(paragon_path, 'w') as file:
-                file.write(order_details)
+                temp= int(data_zamowienia.timestamp())
+                paragon_filename = f"temp/paragony/paragon_{temp}.txt"
+                paragon_path = os.path.join(paragon_filename)
+                with open(paragon_path, 'w') as file:
+                    file.write(order_details)
 
 
 
-            zamowienie.paragon_path = paragon_filename
-            zamowienie.user_id = current_user.id
-            db.session.add(zamowienie)
-            db.session.commit()
+                zamowienie.paragon_path = paragon_filename
+                zamowienie.user_id = current_user.id
+                db.session.add(zamowienie)
+                db.session.commit()
 
-            session['cart'] = {}
-            return redirect(url_for('index'))
+                session['cart'] = {}
+                flash(f'Zamówienie złożone pomyślnie!', 'success')
+                return redirect(url_for('index'))
+            elif 'place_order' in request.form and address==None:
+                flash('Nie podano adresu!', 'danger')
 
     produkty = Produkt.query.filter(Produkt.id.in_(session['cart'].keys())).all()
-    return render_template('koszyk.html', produkty=produkty, cart=session['cart'],suma_cala=suma_cala)
+    return render_template('koszyk.html', produkty=produkty, cart=session['cart'],suma_cala=suma_cala,address=address)
 
 @app.route("/konto")
 @login_required

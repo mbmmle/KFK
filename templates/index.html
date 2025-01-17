@@ -179,6 +179,17 @@
         <p>Kentucky Fried Kurczak to miejsce idealne zarówno na rodzinny obiad, jak i na spotkanie z przyjaciółmi. 
             W weekendy często organizowane są tu wieczory tematyczne z muzyką na żywo. Restauracja oferuje również dania na wynos, co czyni ją ulubioną opcją dla osób zabieganych. 
             Dbałość o szczegóły i pasja do gotowania sprawiają, że Kentucky Fried Kurczak zyskał opinię jednego z najlepszych lokali w okolicy.</p>
+            <div class="flash-messages">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    <div class="container">
+                      {% for category, message in messages %}
+                        <div style="text-align: center; color: red; font-size: 2rem;">{{message}}</div>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                {% endwith %}
+              </div>
     </div>
 
     <div class="d-grid gap-2 col-6 mx-auto mt-4">

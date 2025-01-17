@@ -134,16 +134,37 @@
                 </li>
             {% endfor %}
         </ul>
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <div class="container">
+                  {% for category, message in messages %}
+                    <div style="text-align: center; color: red; font-size: 2rem;">{{message}}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
+          </div>
         <div class="total-summary">
+            {% if suma_cala %}
             <h3>Suma: {{ suma_cala }} PLN</h3>
+            {% endif %}
         </div>
         <form method="POST" action="{{ url_for('koszyk') }}">
-            <button type="submit" class="btn">Zamów</button>
+            <div class="form-group">
+                <label for="address">Adres dostawy:</label>
+                <input type="text" name="address" id="address" class="form-control" required>
+                <h3><button type="submit" name="submit_address" class="btn">Dodaj adres</button></h3>
+                
+            </div>
+        </form>
+        <form method="POST" action="{{ url_for('koszyk') }}">
+            <button type="submit" name="place_order" class="btn">Zamów</button>
         </form>
         {% else %}
         <p>Twój koszyk jest pusty.</p>
         {% endif %}
-        <a href="{{ url_for('zamow') }}" class="btn mt-4">Wróć na stronę zamówienia</a>
+        <a href="{{ url_for('zamow') }}" class="btn mt-4">Przejdź na strone zamówienia</a>
     </div>
     <p style="text-align: center; color: gray;">Zdjęcia wygenerowane przez AI.</p>
     {% endblock %}
