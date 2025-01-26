@@ -153,7 +153,7 @@ def koszyk():
                 session['cart'] = {}
                 flash(f'Zamówienie złożone pomyślnie!', 'success')
                 return redirect(url_for('index'))
-            elif 'place_order' in request.form and address==None:
+        elif 'place_order' in request.form and address==None:
                 flash('Nie podano adresu!', 'danger')
 
     produkty = Produkt.query.filter(Produkt.id.in_(session['cart'].keys())).all()

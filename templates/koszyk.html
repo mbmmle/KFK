@@ -152,12 +152,14 @@
         </div>
         <form method="POST" action="{{ url_for('koszyk') }}">
             <div class="form-group">
-                <label for="address">Adres dostawy:</label>
+                <label for="address">Podaj adres dostawy</label>
                 <input type="text" name="address" id="address" class="form-control" required>
                 <h3><button type="submit" name="submit_address" class="btn">Dodaj adres</button></h3>
-                
             </div>
         </form>
+        {% if address %}
+        <p>Adres dostawy: {{ address }}</p>
+        {% endif %}
         <form method="POST" action="{{ url_for('koszyk') }}">
             <button type="submit" name="place_order" class="btn">Zamów</button>
         </form>
