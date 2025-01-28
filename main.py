@@ -167,7 +167,7 @@ def konto():
     for zamowienie in zamowienia:
         with open(zamowienie.paragon_path, 'r') as file:
             paragon_content = file.read()
-            lista_zamowien.append(paragon_content)
+            lista_zamowien.append((zamowienie.address, paragon_content))
     return render_template('konto.html', lista_zamowien=lista_zamowien)
 
 if __name__ == "__main__":

@@ -11,8 +11,9 @@
     <div class="container mt-5">
         <h2 class="mb-4">Twoje Paragony</h2>
         <ul class="list-group">
-            {% for paragon in lista_zamowien %}
+            {% for address,paragon in lista_zamowien %}
             <li class="list-group-item">
+                <h5>Adres: {{ address }}  (Ta dana jest pobrana bezpośrednio z bazy danych)</h5>
                 <pre>{{ paragon }}</pre>
             </li>
             {% endfor %}
