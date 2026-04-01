@@ -1,3 +1,5 @@
+# Kentucky Fried Kurczak
+
 ## Cel Projektu
 Celem projektu było stworzenie aplikacji webowej w **Flasku**. 
 Wynikiem tego zadania było stworzenie witryny udającej stronę do zamawiania jedzenia- Kentucky Fried Kurczak. Projekt wykorzystuje wszystkie zagadnienia z zajęć i inne funkcjonalności **Flaska**.
