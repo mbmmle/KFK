@@ -1,1 +1,0 @@
-print("Nowy Plik")
